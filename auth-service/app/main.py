@@ -1,13 +1,28 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from app.db.database import engine, Base
-from app.api.user import router as user_router
 
-app = FastAPI()
+from app.api.router import api_router
+from app.core.config import get_settings
+from app.core.logging import RequestLoggingMiddleware, configure_logging, get_logger
 
-Base.metadata.create_all(bind=engine)
+settings = get_settings()
+configure_logging(service_name=settings.service_name, log_level=settings.log_level)
+logger = get_logger(__name__)
 
-app.include_router(user_router)
 
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    logger.info("service_starting")
+    yield
+    logger.info("service_stopping")
+
+
+app = FastAPI(
+    title=settings.service_name,
+    description="Authentication and authorization service.",
+    version=settings.service_version,
+    lifespan=lifespan,
+)
+app.add_middleware(RequestLoggingMiddleware)
+app.include_router(api_router)
