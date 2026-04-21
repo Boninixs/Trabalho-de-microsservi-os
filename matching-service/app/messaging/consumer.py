@@ -32,12 +32,25 @@ class ItemEventsConsumer:
                 await self._task
             self._task = None
 
-        if self._channel is not None and not self._channel.is_closed:
-            await self._channel.close()
-        if self._connection is not None and not self._connection.is_closed:
-            await self._connection.close()
+        await self._close_resources()
 
     async def _consume_loop(self) -> None:
+        settings = get_settings()
+        while True:
+            try:
+                queue = await self._initialize_bindings()
+                logger.info("item_events_consumer_started")
+                async with queue.iterator() as queue_iter:
+                    async for message in queue_iter:
+                        await self._process_message(message)
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                logger.exception("item_events_consumer_retrying")
+                await self._close_resources()
+                await asyncio.sleep(settings.outbox_publish_retry_delay_seconds)
+
+    async def _initialize_bindings(self) -> aio_pika.abc.AbstractRobustQueue:
         settings = get_settings()
         self._connection = await aio_pika.connect_robust(settings.rabbitmq_url)
         self._channel = await self._connection.channel()
@@ -66,12 +79,15 @@ class ItemEventsConsumer:
         await queue.bind(exchange, routing_key="item.updated")
         await dead_letter_queue.bind(dead_letter_exchange, routing_key="item.created")
         await dead_letter_queue.bind(dead_letter_exchange, routing_key="item.updated")
+        return queue
 
-        logger.info("item_events_consumer_started")
-
-        async with queue.iterator() as queue_iter:
-            async for message in queue_iter:
-                await self._process_message(message)
+    async def _close_resources(self) -> None:
+        if self._channel is not None and not self._channel.is_closed:
+            await self._channel.close()
+        if self._connection is not None and not self._connection.is_closed:
+            await self._connection.close()
+        self._channel = None
+        self._connection = None
 
     async def _process_message(self, message: IncomingMessage) -> None:
         async with message.process(requeue=False):

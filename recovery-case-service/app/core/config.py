@@ -34,7 +34,7 @@ class Settings(BaseSettings):
         alias="RABBITMQ_DEAD_LETTER_EXCHANGE",
     )
     outbox_publisher_enabled: bool = Field(
-        default=False,
+        default=True,
         alias="OUTBOX_PUBLISHER_ENABLED",
     )
     outbox_publish_poll_interval_seconds: float = Field(
@@ -54,7 +54,7 @@ class Settings(BaseSettings):
         alias="OUTBOX_PUBLISH_MAX_ATTEMPTS",
     )
     event_consumer_enabled: bool = Field(
-        default=False,
+        default=True,
         alias="EVENT_CONSUMER_ENABLED",
     )
     rabbitmq_match_events_queue: str = Field(
