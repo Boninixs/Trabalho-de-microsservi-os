@@ -1,3 +1,7 @@
+"""
+Esse arquivo é responsável por registrar e organizar todos os routers
+dos módulos da aplicação
+"""
 from fastapi import APIRouter
 
 from app.api.auth import router as auth_router

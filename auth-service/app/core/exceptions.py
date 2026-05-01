@@ -1,14 +1,24 @@
+"""
+Esse arquivo é responsável pelas exceções relacionadas ao serviço de autenticação.
+"""
 class AuthServiceError(Exception):
-    """Base auth service exception."""
+    """
+    Exceção base para erros do serviço de autenticação.
+    """
 
 
 class DuplicateEmailError(AuthServiceError):
-    """Raised when the email is already in use."""
+    """
+    Erro lançado quando o e-mail informado já está em uso.
+    """
 
 
 class AuthenticationError(AuthServiceError):
-    """Raised when credentials are invalid."""
-
+    """
+    Erro lançado quando as credenciais são inválidas.
+    """
 
 class InactiveUserError(AuthServiceError):
-    """Raised when an inactive user attempts to authenticate."""
+    """
+    Erro lançado quando um usuário inativo tenta se autenticar.
+    """

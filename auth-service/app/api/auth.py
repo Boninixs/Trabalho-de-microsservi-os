@@ -1,3 +1,8 @@
+"""
+Esse arquivo é resposável pelas rotas de autenticação e gerenciamento de usuário.
+As rotas incluem o registro de novos usuários, autenticação (login) e consulta do 
+perfil do usuário autenticado.
+"""
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -20,7 +25,23 @@ router = APIRouter(prefix="/auth", tags=["auth"])
     response_model=UserProfileResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def register(payload: UserRegisterRequest, db: Session = Depends(get_db)) -> UserProfileResponse:
+def register(
+    payload: UserRegisterRequest, 
+    db: Session = Depends(get_db),
+) -> UserProfileResponse:
+    """
+    Registra um novo usuário.
+
+    Args:
+        payload: Dados necessários para criação do usuário.
+        db: Sessão do banco de dados.
+
+    Returns:
+        Dados do usuário criado.
+
+    Raises:
+        HTTPException: Caso o e-mail já esteja em uso.
+    """
     try:
         user = register_user(db, payload)
     except DuplicateEmailError as exc:
@@ -33,7 +54,24 @@ def register(payload: UserRegisterRequest, db: Session = Depends(get_db)) -> Use
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(payload: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse:
+def login(
+    payload: LoginRequest, 
+    db: Session = Depends(get_db),
+) -> TokenResponse:
+    """
+    Autentica um usuário.
+
+    Args:
+        payload: Credenciais de login (email e senha).
+        db: Sessão do banco de dados.
+
+    Returns:
+        Token de autenticação.
+
+    Raises:
+        HTTPException: Caso as credenciais sejam inválidas
+        ou o usuário esteja inativo.
+    """
     try:
         return authenticate_user(db, payload)
     except (AuthenticationError, InactiveUserError) as exc:
@@ -45,6 +83,17 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)) -> TokenResponse
 
 @router.get("/me", response_model=UserProfileResponse)
 def get_me(
-    current_user: User = Depends(require_roles(UserRole.USER, UserRole.ADMIN)),
+    current_user: User = Depends(
+        require_roles(UserRole.USER, UserRole.ADMIN)
+    ),
 ) -> UserProfileResponse:
+    """
+    Retorna os dados do usuário autenticado.
+
+    Args:
+        current_user: Usuário autenticado (injetado via dependência).
+
+    Returns:
+        Perfil do usuário atual.
+    """
     return UserProfileResponse.model_validate(current_user)

@@ -1,10 +1,15 @@
-from logging.config import fileConfig
+""""
+Esse arquivo é resposável pelo módulo de configuração do Alembic para migrações de banco de dados.
+Este módulo é responsável por configurar o ambiente de migração do Alembic,
+definir as conexões com o banco de dados e executar as migrações, seja em modo offline ou online.
+"""
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.core.config import get_settings
 from app.db.base import Base
+from logging.config import fileConfig
 
 config = context.config
 settings = get_settings()
@@ -17,7 +22,13 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
+    """
+    A Função executa as migrações em modo offline.
+    Quando não for possível se conectar ao banco de dados as instruções SQL são geradas 
+    diretamente pela URL.
+    """
     url = config.get_main_option("sqlalchemy.url")
+
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -30,6 +41,10 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
+    """
+    A Função executa as migrações em modo online.
+    Quando for possível se conectar ao banco de dados as migrações são executadas diretamente.
+    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -37,7 +52,10 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection, 
+            target_metadata=target_metadata
+        )
 
         with context.begin_transaction():
             context.run_migrations()

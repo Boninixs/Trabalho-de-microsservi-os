@@ -1,3 +1,9 @@
+"""
+Esse arquivo é responsável pela configuração central da aplicação.
+Nele carregamos variáveis de ambiente, definimos valores padrão e fornecemos acesso centralizado às configurações
+Utiliza Pydantic Settings para validação e tipagem.
+"""
+
 from functools import lru_cache
 
 from pydantic import Field
@@ -5,17 +11,38 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """
+    Classe de configurações da aplicação.
+    Os valores são carregados a partir de variáveis de ambiente,
+    com suporte a arquivo .env e valores padrão.
+    """
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
 
-    service_name: str = Field(default="auth-service", alias="SERVICE_NAME")
-    service_version: str = Field(default="0.1.0", alias="SERVICE_VERSION")
-    service_port: int = Field(default=8000, alias="SERVICE_PORT")
-    environment: str = Field(default="development", alias="ENVIRONMENT")
-    log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+    service_name: str = Field(
+        default="auth-service", 
+        alias="SERVICE_NAME",
+    )
+    service_version: str = Field(
+        default="0.1.0", 
+        alias="SERVICE_VERSION",
+    )
+    service_port: int = Field(
+        default=8000, 
+        alias="SERVICE_PORT",
+        )
+    environment: str = Field(
+        default="development", 
+        alias="ENVIRONMENT",
+    )
+    log_level: str = Field(
+        default="INFO", 
+        alias="LOG_LEVEL",
+    )
     database_url: str = Field(
         default="postgresql+psycopg://postgres:postgres@localhost:5433/auth_service",
         alias="DATABASE_URL",
@@ -33,8 +60,14 @@ class Settings(BaseSettings):
         default="domain.events.dlx",
         alias="RABBITMQ_DEAD_LETTER_EXCHANGE",
     )
-    jwt_secret: str = Field(default="change-me-in-phase-1", alias="JWT_SECRET")
-    jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
+    jwt_secret: str = Field(
+        default="change-me-in-phase-1", 
+        alias="JWT_SECRET",
+    )
+    jwt_algorithm: str = Field(
+        default="HS256", 
+        alias="JWT_ALGORITHM",
+    )
     access_token_expire_minutes: int = Field(
         default=60,
         alias="ACCESS_TOKEN_EXPIRE_MINUTES",
@@ -43,6 +76,14 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
+    """
+    Retorna uma instância única de Settings (singleton).
+
+    O uso de cache evita recriação desnecessária e melhora a performance.
+
+    Returns:
+        Instância de Settings carregada.
+    """
     return Settings()
 
 
