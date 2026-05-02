@@ -1,6 +1,5 @@
 """
 Esse arquivo é responsável pela rota de verificação de saúde da aplicação.
-Fornece um endpoint que indica se o serviço está em funcionamento.
 """
 from fastapi import APIRouter
 
@@ -13,6 +12,8 @@ router = APIRouter(tags=["health"])
 def health_check() -> dict[str, str]:
     """
     Verifica o estado da aplicação.
+    args:        
+        None
     Returns:
         Dicionário contendo informações básicas de status do serviço.
     """

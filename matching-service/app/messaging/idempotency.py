@@ -1,7 +1,5 @@
 """"
 Esse arquivo é responsável por garantir a idempotência no processamento de eventos. 
-Ele verifica se um evento já foi processado anteriormente e registra os eventos processados 
-para evitar processamento duplicado.
 """
 from sqlalchemy.orm import Session
 

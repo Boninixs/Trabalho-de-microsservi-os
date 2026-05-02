@@ -18,8 +18,6 @@ service_name_ctx: ContextVar[str] = ContextVar("service_name", default="service"
 class JsonFormatter(logging.Formatter):
     """"
     Formatter de logs em formato JSON.
-    Args:
-        logging.Formatter: Classe base de formatação de logs do Python.
     """
     def format(self, record: logging.LogRecord) -> str:
         """"
@@ -59,6 +57,8 @@ def configure_logging(service_name: str, log_level: str) -> None:
     Args:
         service_name: Nome do serviço.
         log_level: Nível de log.
+    Returns:
+        None
     """
     service_name_ctx.set(service_name)
     handler = logging.StreamHandler(sys.stdout)
@@ -88,6 +88,8 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
     Middleware para logar informações de cada requisição HTTP, incluindo método, caminho, status code e duração.
     ARgs:
         BaseHTTPMiddleware: Middleware base do Starlette para interceptar requisições HTTP. 
+    returns:
+        None
     """
     async def dispatch(self, request: Request, call_next):
         """"
@@ -95,6 +97,8 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
         Args:            
             request: Objeto de requisição HTTP.
             call_next: Função para chamar o próximo middleware ou endpoint.
+        returns:
+            response: Resposta HTTP gerada pelo próximo middleware ou endpoint.
         """
         correlation_id = request.headers.get("X-Correlation-ID", str(uuid4()))
         token = correlation_id_ctx.set(correlation_id)

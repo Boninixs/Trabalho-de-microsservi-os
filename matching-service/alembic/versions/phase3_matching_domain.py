@@ -15,8 +15,12 @@ depends_on = None
 
 def upgrade() -> None:
     """"
-    Esta função é responsável por criar as tabelas item_projections e match_suggestions no banco de dados, 
-    juntamente com os índices necessários para otimizar as consultas.
+    Esta função é responsável por criar as tabelas item_projections e match_suggestions no banco de 
+    dados e seus índices.
+    args:        
+        None
+    returns:     
+        None
     """
     classification_enum = sa.Enum(
         "LOST",
@@ -111,6 +115,10 @@ def downgrade() -> None:
     """"
     Esta função é responsável por remover as tabelas item_projections e match_suggestions do banco de dados,
     juntamente com os índices e tipos enumerados associados a essas tabelas.
+    args:        
+        None
+    returns:     
+        None
     """
     op.drop_index("ix_match_suggestions_status", table_name="match_suggestions")
     op.drop_index("ix_match_suggestions_found_item_id", table_name="match_suggestions")

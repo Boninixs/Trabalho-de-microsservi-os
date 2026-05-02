@@ -1,6 +1,5 @@
 """"
-Esse arquivo é responsável por mapear os objetos de domínio, MatchSuggestion, para os objetos 
-de resposta, MatchResponse, e para os objetos de payload de eventos, MatchEventPayload. 
+Esse arquivo é responsável por mapear os objetos de domínio. 
 """
 from app.models.match_suggestion import MatchSuggestion
 from app.schemas.match import MatchResponse

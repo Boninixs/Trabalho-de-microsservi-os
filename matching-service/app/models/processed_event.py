@@ -14,10 +14,6 @@ from app.models.common import Base
 class ProcessedEvent(Base):
     """"
     Modelo de dados para os eventos processados.
-    args:
-        Base: Classe base para os modelos de dados do serviço de autenticação
-    returns:
-        ProcessedEvent: Um modelo de dados para representar os eventos processados no serviço de matching.
     """
     __tablename__ = "processed_events"
 

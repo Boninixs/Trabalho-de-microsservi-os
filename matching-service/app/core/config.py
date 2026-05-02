@@ -1,6 +1,5 @@
 """"
-Esse arquivo é responsável por definir a classe de configuração da aplicação, que carrega as variáveis de ambiente 
-e fornece uma interface para acessar essas configurações em toda a aplicação.
+Esse arquivo é responsável por definir a classe de configuração da aplicação.
 """
 from functools import lru_cache
 
@@ -74,7 +73,10 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     """"
-    Função para obter as configurações da aplicação. Utiliza cache para evitar recarregar as configurações a 
-    cada chamada.
+    Função para obter as configurações da aplicação.
+    args:
+        None
+    returns:
+        Settings: A instância da classe de configurações da aplicação, carregada com as variáveis de ambiente.
     """
     return Settings()

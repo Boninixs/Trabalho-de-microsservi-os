@@ -1,6 +1,5 @@
 """"
-Esse arquivo é responsável por definir o modelo de dados para as sugestões de match, que representam as possíveis 
-correspondências entre itens perdidos e encontrados no serviço de matching.
+Esse arquivo é responsável por definir o modelo de dados para as sugestões de match.
 """
 import enum
 import uuid
@@ -27,12 +26,6 @@ class MatchSuggestion(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     """"
     Modelo de dados para as sugestões de match, que representam as possíveis correspondências entre itens perdidos
     e encontrados no serviço de matching.   
-    args:        
-        UUIDPrimaryKeyMixin: Mixin para adicionar um campo de chave primária do tipo UUID
-        TimestampMixin: Mixin para adicionar campos de timestamp
-        Base: Classe base para os modelos de dados do serviço de autenticação
-    returns:    
-        MatchSuggestion: Um modelo de dados para representar as sugestões de match no serviço de matching.  
     """
     __tablename__ = "match_suggestions"
     __table_args__ = (

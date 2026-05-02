@@ -1,6 +1,5 @@
 """
-Esse arquivo é responsável por definir o modelo de dados para a projeção de itens, que é utilizado para 
-armazenar as informações dos itens perdidos e encontrados no serviço de matching.
+Esse arquivo é responsável por definir o modelo de dados para a projeção de itens.
 """
 import enum
 import uuid

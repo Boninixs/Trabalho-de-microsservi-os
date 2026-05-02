@@ -1,6 +1,5 @@
 """
-Esse arquivo é responsável por registrar e organizar todos os routers
-dos módulos da aplicação
+Esse arquivo é responsável por registrar e organizar todos os routers dos módulos da aplicação
 """
 from fastapi import APIRouter
 

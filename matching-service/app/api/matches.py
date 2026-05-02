@@ -28,6 +28,11 @@ def list_matches_endpoint(
 ) -> list[MatchResponse]:
     """"
     Endpoint para listar sugestões de matches, com opção de filtrar por status.
+    args:        
+        status_filter: Filtro opcional para o status da sugestão de match.
+        db: Sessão do banco de dados, injetada via Depends.
+    returns:     
+        Lista de sugestões de matches que correspondem ao filtro aplicado.
     """
     filters = MatchFilters(status=status_filter)
     return [to_match_response(match) for match in list_match_suggestions(db, filters)]
@@ -37,7 +42,13 @@ def list_matches_endpoint(
 def get_match_endpoint(match_id: UUID, db: Session = Depends(get_db)) -> MatchResponse:
     """"
     Endpoint para obter detalhes de uma sugestão de match específica. 
-    Deve retornar 404 se a sugestão de match não for encontrada.
+    args:        
+        match_id: ID da sugestão de match a ser recuperada.
+        db: Sessão do banco de dados, injetada via Depends.
+    returns:     
+        Detalhes da sugestão de match correspondente ao ID fornecido.
+    raise:  
+        HTTPException com status 404 se a sugestão de match não for encontrada.
     """
     try:
         match = retrieve_match_suggestion(db, match_id)
@@ -54,7 +65,14 @@ def accept_match_endpoint(
 ) -> MatchResponse:
     """"
     Endpoint para aceitar uma sugestão de match.
-    Deve retornar 404 se a sugestão de match não for encontrada e 400 se a decisão for inválida 
+    args:        
+        match_id: ID da sugestão de match a ser aceita.
+        payload: Dados adicionais necessários para aceitar a sugestão de match.
+        db: Sessão do banco de dados, injetada via Depends.
+    returns:     
+        Detalhes da sugestão de match após ser aceita.
+    raise:  
+        HTTPException com status 404 se a sugestão de match não for encontrada e 400 se a decisão for inválida.
     """
     try:
         match = accept_match(db, match_id, payload)
@@ -73,7 +91,14 @@ def reject_match_endpoint(
 ) -> MatchResponse:
     """"
     Endpoint para rejeitar uma sugestão de match.
-    Deve retornar 404 se a sugestão de match não for encontrada e 400 se a decisão for inválida.
+    args:        
+        match_id: ID da sugestão de match a ser rejeitada.
+        payload: Dados adicionais necessários para rejeitar a sugestão de match.
+        db: Sessão do banco de dados, injetada via Depends.
+    returns:     
+        Detalhes da sugestão de match após ser rejeitada.
+    raise:  
+        HTTPException com status 404 se a sugestão de match não for encontrada e 400
     """
     try:
         match = reject_match(db, match_id, payload)

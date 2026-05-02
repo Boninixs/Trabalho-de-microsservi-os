@@ -44,9 +44,9 @@ def serialize_outbox_event(outbox_event: OutboxEvent) -> bytes:
     """"
     Serializa um evento de outbox para o formato JSON a ser publicado no RabbitMQ.
     args:
-    outbox_event: O evento de outbox a ser serializado.
+        outbox_event: O evento de outbox a ser serializado.
     returns:
-    Os bytes do evento serializado em formato JSON.
+        Os bytes do evento serializado em formato JSON.
     """
     envelope = {
         "event_id": str(outbox_event.id),
