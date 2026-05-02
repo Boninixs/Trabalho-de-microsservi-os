@@ -17,6 +17,13 @@ logger = get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    """"
+    Define o ciclo de vida da aplicação, registrando logs de início e parada do serviço.
+    args:
+        _: FastAPI - A instância do FastAPI.
+    returns:
+        AsyncGenerator: Um gerador assíncrono que gerencia o ciclo de vida da aplicação.    
+    """
     logger.info("service_starting")
     yield
     logger.info("service_stopping")

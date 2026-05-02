@@ -27,6 +27,10 @@ class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         """"
         Formata o log como JSON, incluindo campos adicionais como correlation_id e service.
+        args:
+            record: LogRecord a ser formatado.
+        Returns:
+            String JSON formatada.
         """
         payload: dict[str, object] = {
             "timestamp": self.formatTime(record, "%Y-%m-%dT%H:%M:%S%z"),
@@ -55,10 +59,11 @@ class JsonFormatter(logging.Formatter):
 def configure_logging(service_name: str, log_level: str) -> None:
     """
     Configura o logging global da aplicação.
-
     Args:
         service_name: Nome do serviço.
         log_level: Nível de log.
+    Returns:
+        None
     """
     service_name_ctx.set(service_name)
     handler = logging.StreamHandler(sys.stdout)
@@ -86,10 +91,6 @@ def get_logger(name: str) -> logging.Logger:
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
     """
     Middleware para logging de requisições HTTP.
-
-    Nele, geramos ou propagamos um correlation_id para cada requisição, medimos o tempo de execução
-    e registramos logs de sucesso e erro, incluindo informações como método HTTP, caminho, status
-    code e duração da requisição.
     """
     async def dispatch(self, request: Request, call_next):
         correlation_id = request.headers.get("X-Correlation-ID", str(uuid4()))

@@ -14,7 +14,6 @@ from app.models.common import Base
 
 class OutboxEvent(Base):
     """
-    Entidade de evento do outbox.
     Armazena eventos de domínio que devem ser publicados em um broker.
     """
     __tablename__ = "outbox_events"

@@ -1,7 +1,5 @@
 """"
-Esse arquivo é responsável por definir os esquemas de dados relacionados a usuários, 
-incluindo solicitações de registro e login, respostas de token e perfil do usuário. 
-Ele utiliza o Pydantic para validação e serialização dos dados.
+Esse arquivo é responsável por definir os esquemas de dados relacionados a usuários.
 """
 from datetime import datetime
 from uuid import UUID
@@ -13,8 +11,7 @@ from app.models.user import UserRole
 
 class UserRegisterRequest(BaseModel):
     """"
-    O UserRegisterRequest é um modelo de dados que representa a solicitação de registro de um novo usuário,
-    incluindo o nome completo, email e senha do usuário.
+    O UserRegisterRequest é um modelo de dados que representa a solicitação de registro de um novo usuário.
     """
     full_name: str = Field(min_length=3, max_length=255)
     email: EmailStr
@@ -23,8 +20,7 @@ class UserRegisterRequest(BaseModel):
 
 class LoginRequest(BaseModel):
     """"
-    O LoginRequest é um modelo de dados que representa a solicitação de login de um usuário,
-    incluindo o email e senha do usuário.
+    O LoginRequest é um modelo de dados que representa a solicitação de login de um usuário.
     """
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
@@ -54,8 +50,7 @@ class TokenClaims(BaseModel):
 
 class UserProfileResponse(BaseModel):
     """"
-    O UserProfileResponse é um modelo de dados que representa a resposta contendo as informações do perfil do usuário,
-    incluindo ID, nome completo, email, função, status de ativação e datas de criação e atualização.
+    O UserProfileResponse é um modelo de dados que representa a resposta contendo as informações do perfil do usuário.
     """
     model_config = ConfigDict(from_attributes=True)
 

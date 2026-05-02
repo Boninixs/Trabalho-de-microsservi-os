@@ -1,7 +1,5 @@
 """"
 Esse arquivo é resposável pelo módulo de configuração do Alembic para migrações de banco de dados.
-Este módulo é responsável por configurar o ambiente de migração do Alembic,
-definir as conexões com o banco de dados e executar as migrações, seja em modo offline ou online.
 """
 
 from alembic import context
@@ -26,6 +24,10 @@ def run_migrations_offline() -> None:
     A Função executa as migrações em modo offline.
     Quando não for possível se conectar ao banco de dados as instruções SQL são geradas 
     diretamente pela URL.
+    args:     
+        None
+    return:   
+        None
     """
     url = config.get_main_option("sqlalchemy.url")
 
@@ -44,6 +46,10 @@ def run_migrations_online() -> None:
     """
     A Função executa as migrações em modo online.
     Quando for possível se conectar ao banco de dados as migrações são executadas diretamente.
+    args:     
+        None
+    return:   
+        None    
     """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),

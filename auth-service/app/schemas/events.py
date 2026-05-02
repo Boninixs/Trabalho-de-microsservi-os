@@ -11,8 +11,7 @@ from pydantic import BaseModel, Field
 
 class EventEnvelope(BaseModel):
     """"
-    O EventEnvelope é um modelo de dados que encapsula as informações de um evento, incluindo seu ID, tipo,
-ID do agregado, versão do agregado, data de ocorrência, ID de correlação, ID de causação e o payload do evento.
+    O EventEnvelope é um modelo de dados que encapsula as informações de um evento.
     """
     event_id: UUID = Field(default_factory=uuid4)
     event_type: str
@@ -26,7 +25,7 @@ ID do agregado, versão do agregado, data de ocorrência, ID de correlação, ID
 
 class BrokerMessage(BaseModel):
     """"
-    O BrokerMessage é um modelo de dados que representa uma mensagem a ser enviada para o broker, incluindo o envelope do evento, a chave de roteamento, o nome da exchange e os cabeçalhos.
+    O BrokerMessage é um modelo de dados que representa uma mensagem a ser enviada para o broker.
     """
     envelope: EventEnvelope
     routing_key: str

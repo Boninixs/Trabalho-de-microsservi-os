@@ -1,6 +1,5 @@
 """
 Esse arquivo é responsável por configurar a base de dados e importar os modelos para que as tabelas sejam criadas corretamente. 
-Este módulo garante que todos os modelos sejam importados e registrados no metadata do SQLAlchemy
 """
 from app.models.common import Base
 

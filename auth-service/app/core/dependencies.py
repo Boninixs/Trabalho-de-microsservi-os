@@ -1,7 +1,5 @@
 """
 Esse arquivo é responsável pelas dependências de autenticação e autorização.
-Nele fazemos a extração e validação de token JWT, a recuperação do usuário autenticado, 
-verificação de usuário ativo e controle de acesso baseado em papéis (roles).
 """
 from collections.abc import Callable
 
@@ -23,13 +21,10 @@ def get_current_token_claims(
 ) -> TokenClaims:
     """
     Extrai e valida os claims do token JWT.
-
     Args:
         credentials: Credenciais HTTP contendo o token Bearer.
-
     Returns:
         Claims decodificados do token.
-
     Raises:
         HTTPException: Caso o token não seja fornecido ou seja inválido.
     """
@@ -54,14 +49,11 @@ def get_current_user(
 ) -> User:
     """
     Recupera o usuário a partir do token.
-
     Args:
         claims: Dados extraídos do token JWT.
         db: Sessão do banco de dados.
-
     Returns:
         Usuário correspondente ao token.
-
     Raises:
         HTTPException: Caso o usuário não seja encontrado.
     """
@@ -80,13 +72,10 @@ def get_current_active_user(
 ) -> User:
     """
     Garante que o usuário está ativo.
-
     Args:
         current_user: Usuário autenticado.
-
     Returns:
         Usuário ativo.
-
     Raises:
         HTTPException: Caso o usuário esteja inativo.
     """
@@ -102,13 +91,10 @@ def get_current_active_user(
 def require_roles(*roles: UserRole) -> Callable[[User], User]:
     """
     Cria uma dependência que valida os papéis do usuário.
-
     Args:
         roles: Papéis permitidos para acesso.
-
     Returns:
         Função de dependência que valida o papel do usuário.
-
     Raises:
         HTTPException: Caso o usuário não tenha permissão.
     """

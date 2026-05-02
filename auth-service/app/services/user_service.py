@@ -1,3 +1,6 @@
+"""
+Esse arquivo é responsável por fornecer a lógica de negócios relacionada aos usuários. 
+"""
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
@@ -9,10 +12,27 @@ from app.schemas.user import LoginRequest, TokenResponse, UserRegisterRequest
 
 
 def normalize_email(email: str) -> str:
+    """
+    Normaliza o email, removendo espaços em branco e convertendo para minúsculas.
+    args:   
+        email: O email a ser normalizado.
+    returns:
+        str: O email normalizado.
+    """
     return email.strip().lower()
 
 
 def register_user(session: Session, payload: UserRegisterRequest) -> User:
+    """
+    Registra um novo usuário, verificando se o email já está em uso.
+    args:
+        session: Sessão do banco de dados.
+        payload: A solicitação de registro contendo nome completo, email e senha do usuário.
+    returns:
+        User: O usuário registrado.
+    raises:
+        DuplicateEmailError: Se o email já estiver em uso por outro usuário.
+    """
     normalized_email = normalize_email(payload.email)
     existing_user = get_user_by_email(session, normalized_email)
     if existing_user is not None:
@@ -32,6 +52,17 @@ def register_user(session: Session, payload: UserRegisterRequest) -> User:
 
 
 def authenticate_user(session: Session, payload: LoginRequest) -> TokenResponse:
+    """
+    Autentica um usuário com base em seu email e senha.
+    args:
+        session: Sessão do banco de dados.
+        payload: A solicitação de login contendo email e senha.
+    returns:
+        TokenResponse: A resposta contendo o token de acesso e o tempo de expiração.
+    raises:
+        AuthenticationError: Se o email ou senha estiverem incorretos.
+        InactiveUserError: Se o usuário estiver inativo.
+    """
     normalized_email = normalize_email(payload.email)
     user = get_user_by_email(session, normalized_email)
 

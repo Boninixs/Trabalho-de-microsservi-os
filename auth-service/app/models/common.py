@@ -12,8 +12,6 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 class Base(DeclarativeBase):
     """
     Classe base para todos os modelos ORM.
-
-    Centraliza o metadata utilizado pelo SQLAlchemy e Alembic.
     """
     pass
 

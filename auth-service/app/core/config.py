@@ -1,7 +1,5 @@
 """
 Esse arquivo é responsável pela configuração central da aplicação.
-Nele carregamos variáveis de ambiente, definimos valores padrão e fornecemos acesso centralizado às configurações
-Utiliza Pydantic Settings para validação e tipagem.
 """
 
 from functools import lru_cache
@@ -13,8 +11,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """
     Classe de configurações da aplicação.
-    Os valores são carregados a partir de variáveis de ambiente,
-    com suporte a arquivo .env e valores padrão.
     """
 
     model_config = SettingsConfigDict(
@@ -77,10 +73,9 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     """
-    Retorna uma instância única de Settings (singleton).
-
-    O uso de cache evita recriação desnecessária e melhora a performance.
-
+    Retorna uma instância única de Settings.
+    args:
+        None
     Returns:
         Instância de Settings carregada.
     """

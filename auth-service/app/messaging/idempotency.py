@@ -1,7 +1,5 @@
 """
-Arquivo responsável pelos serviços relacionados ao controle de eventos processados.
-Nele, verifica-se se um evento já foi processado para garantir a idempotência no consumo de eventos, 
-evitando processamento duplicado e registrando eventos já processados.
+Esse arquivo é responsável pelos serviços relacionados ao controle de eventos processados.
 """
 from sqlalchemy.orm import Session
 
@@ -16,11 +14,9 @@ from app.schemas.events import EventEnvelope
 def has_been_processed(session: Session, envelope: EventEnvelope) -> bool:
     """
     Verifica se um evento já foi processado.
-
     Args:
         session: Sessão do banco de dados.
         envelope: Envelope do evento recebido.
-
     Returns:
         True se o evento já foi processado, False caso não tenha sido.
     """
@@ -33,11 +29,9 @@ def register_processed_event(
 ) -> ProcessedEvent:
     """
     Registra um evento como processado.
-
     Args:
         session: Sessão do banco de dados.
         envelope: Envelope do evento recebido.
-
     Returns:
         Instância do evento processado persistido.
     """

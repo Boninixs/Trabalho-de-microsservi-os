@@ -1,7 +1,5 @@
 """
 Esse arquivo é responsável pelos utilitários de segurança para autenticação.
-Nele é implementado o hash e verificação de senha, é feita a criação de tokens JWT 
-e a decodificação e validação desses tokens.
 """
 from datetime import datetime, timedelta, timezone
 from uuid import UUID
@@ -18,10 +16,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def hash_password(password: str) -> str:
     """
     Gera o hash de uma senha.
-
     Args:
         password: Senha em texto plano.
-
     Returns:
         Senha criptografada.
     """
@@ -31,24 +27,20 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     Verifica se uma senha em texto plano corresponde ao hash fornecido.
-
     Args:
         plain_password: Senha em texto plano.
         hashed_password: Hash da senha.
-
     Returns:
-        True se a senha estiver correta, False caso contrário.
+        True se a senha estiver correta, False se não.
     """
     return pwd_context.verify(plain_password, hashed_password)
 
 def create_access_token(*, subject: UUID, role: str) -> str:
     """
     Cria um token JWT de acesso.
-
     Args:
         subject: Identificador do usuário (UUID).
         role: Papel do usuário.
-
     Returns:
         Token JWT assinado.
     """
@@ -67,13 +59,10 @@ def create_access_token(*, subject: UUID, role: str) -> str:
 def decode_access_token(token: str) -> TokenClaims:
     """
     Decodifica e valida um token JWT.
-
     Args:
         token: Token JWT.
-
     Returns:
         Claims validados do token.
-
     Raises:
         ValueError: Caso o token seja inválido, expirado ou incompleto.
     """

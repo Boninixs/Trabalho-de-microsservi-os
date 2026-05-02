@@ -1,7 +1,6 @@
 """
-Fase 1: Autenticação e Usuários.
-Esse arquivo é resposável pela criação do enum de papéis de usuário (USER e ADMIN) e pela 
-tabela users para autenticação e controle de acesso
+Esse arquivo é resposável pela criação do enum de papéis de usuário e pela tabela users para autenticação 
+e controle de acesso.
 """
 
 from alembic import op
@@ -18,8 +17,12 @@ def upgrade() -> None:
     """ 
     Aplica a migração para criar a tabela de usuários com as informações de autenticação e 
     controle de acesso.
-    Também cria o enum user_role para definir os papéis de usuário (USER e ADMIN), além de 
+    Também cria o enum user_role para definir os papéis de usuário, além de 
     índice que garante a unicidade do email.
+    args:
+        None
+    returns:
+        None
     """
     user_role_enum = sa.Enum(
         "USER", 
@@ -67,6 +70,10 @@ def downgrade() -> None:
     """
     Reverte as mudanças feitas no upgrade, removendo a tabela de usuários e o enum de papéis de usuário.
     A ordem é importante para evitar conflitos.
+    args:
+        None
+    returns:
+        None
     """
     op.drop_index("ix_users_email", table_name="users")
     op.drop_table("users")

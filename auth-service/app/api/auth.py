@@ -1,7 +1,5 @@
 """
 Esse arquivo é resposável pelas rotas de autenticação e gerenciamento de usuário.
-As rotas incluem o registro de novos usuários, autenticação (login) e consulta do 
-perfil do usuário autenticado.
 """
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -31,14 +29,11 @@ def register(
 ) -> UserProfileResponse:
     """
     Registra um novo usuário.
-
     Args:
         payload: Dados necessários para criação do usuário.
         db: Sessão do banco de dados.
-
     Returns:
         Dados do usuário criado.
-
     Raises:
         HTTPException: Caso o e-mail já esteja em uso.
     """
@@ -60,14 +55,11 @@ def login(
 ) -> TokenResponse:
     """
     Autentica um usuário.
-
     Args:
         payload: Credenciais de login (email e senha).
         db: Sessão do banco de dados.
-
     Returns:
         Token de autenticação.
-
     Raises:
         HTTPException: Caso as credenciais sejam inválidas
         ou o usuário esteja inativo.
@@ -89,10 +81,8 @@ def get_me(
 ) -> UserProfileResponse:
     """
     Retorna os dados do usuário autenticado.
-
     Args:
         current_user: Usuário autenticado (injetado via dependência).
-
     Returns:
         Perfil do usuário atual.
     """

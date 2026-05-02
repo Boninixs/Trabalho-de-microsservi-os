@@ -1,7 +1,5 @@
 """
 Esse arquivo é responsável pelos serviços relacionados ao Outbox Pattern.
-Nele, são infilerados os eventos para a publicação assíncrona, garantindo a persistência 
-dos eventos antes de enviá-los ao broker.
 """
 from sqlalchemy.orm import Session
 
@@ -17,6 +15,17 @@ def enqueue_event(
     exchange_name: str,
     headers: dict | None = None,
 ) -> OutboxEvent:
+    """"
+    Enfileira um evento no Outbox para publicação futura.
+    Args:
+        session: Sessão do banco de dados.
+        envelope: Envelope do evento a ser enfileirado.
+        routing_key: Chave de roteamento para o broker.
+        exchange_name: Nome da exchange para o broker.
+        headers: Cabeçalhos adicionais para o evento.
+    Returns:
+        Instância do evento do Outbox.
+    """
     outbox_event = OutboxEvent(
         id=envelope.event_id,
         event_type=envelope.event_type,
@@ -36,6 +45,14 @@ def enqueue_event(
 
 
 def enqueue_broker_message(session: Session, message: BrokerMessage) -> OutboxEvent:
+    """"
+    Enfileira uma mensagem de broker no Outbox para publicação futura.
+    Args:        
+        session: Sessão do banco de dados.
+        message: Mensagem de broker a ser enfileirada.
+    Returns:        
+        Instância do evento do Outbox.
+    """
     return enqueue_event(
         session=session,
         envelope=message.envelope,

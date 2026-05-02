@@ -1,7 +1,5 @@
 """
-Fase 0: Infraestrutura base: Outbox e Eventos Processados. 
-Esse arquivo é resposável pela criação das tabelas para a implementação do padrão Outbox e 
-permite a idempotência em eventos.
+Esse arquivo é resposável pela criação das tabelas para a implementação do padrão Outbox.
 """
 
 from alembic import op
@@ -16,9 +14,12 @@ depends_on = None
 
 def upgrade() -> None:
     """ 
-    Cria as tabelas do Outbox (outbox_events), que armazena os eventos que serão publicados, e a 
-    tabela de Eventos Processados (processed_events), que registra os eventos que já foram 
-    processados.
+    Cria as tabelas do Outbox, que armazena os eventos que serão publicados, e a tabela de Eventos 
+    Processados , que registra os eventos que já foram processados.
+    args:
+        None
+    return:
+        None
     """
     op.create_table(
         "outbox_events",
@@ -94,7 +95,10 @@ def downgrade() -> None:
     """
     Reverte as mudanças que foram deitas no upgrade, retirando os indices criados e as tabelas do 
     Outbox e Eventos Processados.
-    A ordem escolhida é importante para evitar que ocorra conflitos.
+    args:
+        None
+    return:
+        None
     """
     op.drop_index("ix_processed_events_event_type", table_name="processed_events")
     op.drop_index("ix_processed_events_aggregate_id", table_name="processed_events")

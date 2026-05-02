@@ -1,7 +1,5 @@
 """
 Esse arquivo é responsável pela definição da topologia de mensageria.
-Nele, definimos as exchanges, routing keys, bindings de filas e dead letter queues (DLQ) que serão 
-utilizadas pelos serviços para comunicação assíncrona.
 """
 EVENTS_EXCHANGE = "domain.events"
 DEAD_LETTER_EXCHANGE = "domain.events.dlx"
@@ -45,6 +43,10 @@ AUDIT_QUEUE_BINDINGS = {
 def build_topology_snapshot() -> dict[str, object]:
     """
     Constrói uma estrutura de dados representando a topologia de mensageria configurada.
+    args:
+        None
+    returns:    
+        dict[str, object]: Um dicionário contendo as configurações de exchanges, routing keys e bindings.
     """
     return {
         "events_exchange": EVENTS_EXCHANGE,
