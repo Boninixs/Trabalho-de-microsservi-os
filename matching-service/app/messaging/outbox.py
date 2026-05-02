@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por gerenciar a fila de eventos a serem publicados no RabbitMQ. 
+"""
 from sqlalchemy.orm import Session
 
 from app.models.outbox import OutboxEvent
@@ -12,6 +15,17 @@ def enqueue_event(
     exchange_name: str,
     headers: dict | None = None,
 ) -> OutboxEvent:
+    """"
+    Enfileira um evento para publicação no RabbitMQ.
+    args:        
+        session: A sessão do banco de dados.
+        envelope: O envelope do evento a ser enfileirado.
+        routing_key: A chave de roteamento para o evento.
+        exchange_name: O nome da exchange para o evento.
+        headers: Cabeçalhos adicionais para o evento (opcional).
+    returns:     
+        O objeto OutboxEvent criado.
+    """
     outbox_event = OutboxEvent(
         id=envelope.event_id,
         event_type=envelope.event_type,
@@ -31,6 +45,14 @@ def enqueue_event(
 
 
 def enqueue_broker_message(session: Session, message: BrokerMessage) -> OutboxEvent:
+    """"
+    Enfileira uma mensagem de broker para publicação no RabbitMQ.
+    args:        
+        session: A sessão do banco de dados.
+        message: A mensagem de broker a ser enfileirada.
+    returns:     
+        O objeto OutboxEvent criado.
+    """
     return enqueue_event(
         session=session,
         envelope=message.envelope,

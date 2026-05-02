@@ -1,3 +1,7 @@
+"""
+Esse arquivo é responsável por definir o modelo de dados para a projeção de itens, que é utilizado para 
+armazenar as informações dos itens perdidos e encontrados no serviço de matching.
+"""
 import enum
 import uuid
 from datetime import date, datetime
@@ -10,11 +14,17 @@ from app.models.common import Base
 
 
 class ItemClassification(str, enum.Enum):
+    """"
+    Enum para classificar os itens como perdidos ou encontrados.    
+    """
     LOST = "LOST"
     FOUND = "FOUND"
 
 
 class ExternalItemStatus(str, enum.Enum):
+    """"
+    Enum para representar o status dos itens na perspectiva externa.
+    """
     AVAILABLE = "AVAILABLE"
     MATCHED = "MATCHED"
     IN_RECOVERY = "IN_RECOVERY"
@@ -24,6 +34,10 @@ class ExternalItemStatus(str, enum.Enum):
 
 
 class ItemProjection(Base):
+    """"
+    Modelo de dados para a projeção de itens, que é utilizado para armazenar as informações dos itens perdidos 
+    e encontrados no serviço de matching.
+    """
     __tablename__ = "item_projections"
 
     id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True)

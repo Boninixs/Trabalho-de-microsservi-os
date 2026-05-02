@@ -1,15 +1,13 @@
-"""phase0 base infrastructure
-
-Revision ID: phase0_base
-Revises:
-Create Date: 2026-04-14 00:00:00
+"""
+Fase 0: Infraestrutura base: Outbox e Eventos Processados.
+Esse arquivo é resposável pela criação das tabelas para a implementação do padrão Outbox e
+permite a idempotência em eventos.
 """
 
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-# revision identifiers, used by Alembic.
 revision = "phase0_base"
 down_revision = None
 branch_labels = None
@@ -17,6 +15,11 @@ depends_on = None
 
 
 def upgrade() -> None:
+    """"
+    Cria as tabelas do Outbox (outbox_events), que armazena os eventos que serão publicados, e a
+    tabela de Eventos Processados (processed_events), que registra os eventos que já foram
+    processados.
+    """
     op.create_table(
         "outbox_events",
         sa.Column("id", postgresql.UUID(as_uuid=True), nullable=False),
@@ -89,6 +92,10 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """"
+    Reverte as mudanças feitas no método upgrade, removendo as tabelas e índices criados para o Outbox e 
+    eventos Processados.
+    """
     op.drop_index("ix_processed_events_event_type", table_name="processed_events")
     op.drop_index("ix_processed_events_aggregate_id", table_name="processed_events")
     op.drop_table("processed_events")

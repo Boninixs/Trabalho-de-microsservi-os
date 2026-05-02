@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por configurar os fixtures para os testes de integração do serviço de matching. 
+"""
 from collections.abc import Generator
 from pathlib import Path
 import os
@@ -26,6 +29,13 @@ def client() -> Generator[TestClient, None, None]:
 
 @pytest.fixture
 def integration_database_url() -> str:
+    """"
+    Fixture para obter a URL de conexão do banco de dados de teste para os testes de integração.
+    args:        
+        None
+    returns:        
+        A URL de conexão do banco de dados de teste.
+    """
     database_url = os.getenv("MATCHING_SERVICE_TEST_DATABASE_URL")
     if not database_url:
         pytest.skip("MATCHING_SERVICE_TEST_DATABASE_URL não configurada para testes de integração")
@@ -34,6 +44,13 @@ def integration_database_url() -> str:
 
 @pytest.fixture
 def migrated_postgres_engine(integration_database_url: str):
+    """
+    Fixture para criar um engine do SQLAlchemy conectado ao banco de dados de teste e aplicar as migrações do Alembic.
+    args:
+        integration_database_url: A URL de conexão do banco de dados de teste.
+    returns:
+        Um engine do SQLAlchemy conectado ao banco de dados de teste com as migrações aplicadas.
+    """
     alembic_config = Config(str(BASE_DIR / "alembic.ini"))
     alembic_config.set_main_option("sqlalchemy.url", integration_database_url)
     alembic_config.set_main_option("script_location", str(BASE_DIR / "alembic"))
@@ -46,6 +63,13 @@ def migrated_postgres_engine(integration_database_url: str):
 
 @pytest.fixture
 def postgres_session(migrated_postgres_engine) -> Generator[Session, None, None]:
+    """"
+    Fixture para criar uma sessão do SQLAlchemy conectada ao banco de dados de teste.
+    args:
+        migrated_postgres_engine: O engine do SQLAlchemy conectado ao banco de dados de teste com as migrações aplicadas.
+    returns:
+        Uma sessão do SQLAlchemy conectada ao banco de dados de teste.
+    """
     SessionLocal = sessionmaker(
         bind=migrated_postgres_engine,
         autoflush=False,
@@ -68,6 +92,13 @@ def postgres_session(migrated_postgres_engine) -> Generator[Session, None, None]
 
 @pytest.fixture
 def integration_client(postgres_session: Session) -> Generator[TestClient, None, None]:
+    """"
+    Fixture para criar um cliente de teste do FastAPI com a sessão do banco de dados de teste injetada.
+    args:
+        postgres_session: A sessão do SQLAlchemy conectada ao banco de dados de teste.
+    returns:
+        Um cliente de teste do FastAPI com a sessão do banco de dados de teste injetada.
+    """
     def override_get_db():
         try:
             yield postgres_session

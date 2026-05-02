@@ -1,3 +1,6 @@
+""""
+Esse aquivo é responsável por definir o modelo de dados para os eventos de outbox.
+"""
 import uuid
 from datetime import datetime
 
@@ -9,6 +12,13 @@ from app.models.common import Base
 
 
 class OutboxEvent(Base):
+    """"
+    Modelo de dados para os eventos de outbox.
+    args:
+        Base: Classe base para os modelos de dados do serviço de autenticação
+    returns:
+        OutboxEvent: Um modelo de dados para representar os eventos de outbox no serviço de matching.
+    """
     __tablename__ = "outbox_events"
 
     id: Mapped[uuid.UUID] = mapped_column(

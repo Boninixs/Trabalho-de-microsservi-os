@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável pela configuração de logging e rastreio de requisições.
+"""
 import json
 import logging
 import sys
@@ -13,7 +16,19 @@ service_name_ctx: ContextVar[str] = ContextVar("service_name", default="service"
 
 
 class JsonFormatter(logging.Formatter):
+    """"
+    Formatter de logs em formato JSON.
+    Args:
+        logging.Formatter: Classe base de formatação de logs do Python.
+    """
     def format(self, record: logging.LogRecord) -> str:
+        """"
+        Formata o log como JSON, incluindo campos adicionais como correlation_id e service.
+        Args:
+            record: Registro de log a ser formatado.
+        Returns:
+            String JSON formatada representando o log.
+        """
         payload: dict[str, object] = {
             "timestamp": self.formatTime(record, "%Y-%m-%dT%H:%M:%S%z"),
             "level": record.levelname,
@@ -39,6 +54,12 @@ class JsonFormatter(logging.Formatter):
 
 
 def configure_logging(service_name: str, log_level: str) -> None:
+    """"
+    Configura o logging global da aplicação.
+    Args:
+        service_name: Nome do serviço.
+        log_level: Nível de log.
+    """
     service_name_ctx.set(service_name)
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(JsonFormatter())
@@ -50,11 +71,31 @@ def configure_logging(service_name: str, log_level: str) -> None:
 
 
 def get_logger(name: str) -> logging.Logger:
+    """"
+    Retorna um logger configurado com o nome especificado. O logger incluirá 
+    automaticamente o correlation_id e o nome do serviço em todos os logs.
+    Args:
+        name: Nome do logger.
+
+    Returns:
+        Instância de logger.
+    """
     return logging.getLogger(name)
 
 
 class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    """"
+    Middleware para logar informações de cada requisição HTTP, incluindo método, caminho, status code e duração.
+    ARgs:
+        BaseHTTPMiddleware: Middleware base do Starlette para interceptar requisições HTTP. 
+    """
     async def dispatch(self, request: Request, call_next):
+        """"
+        Intercepta cada requisição, gera ou propaga um correlation_id, mede a duração da requisição e loga as informações relevantes.
+        Args:            
+            request: Objeto de requisição HTTP.
+            call_next: Função para chamar o próximo middleware ou endpoint.
+        """
         correlation_id = request.headers.get("X-Correlation-ID", str(uuid4()))
         token = correlation_id_ctx.set(correlation_id)
         logger = get_logger("http")

@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por definir a topologia de mensagens do sistema, incluindo as exchanges, filas e bindings.
+"""
 EVENTS_EXCHANGE = "domain.events"
 DEAD_LETTER_EXCHANGE = "domain.events.dlx"
 
@@ -38,6 +41,13 @@ AUDIT_QUEUE_BINDINGS = {
 
 
 def build_topology_snapshot() -> dict[str, object]:
+    """"
+    Constrói um snapshot da topologia de mensagens.  
+    args:        
+        None
+    returns:    
+        dict: Um dicionário contendo a configuração da topologia de mensagens.
+    """
     return {
         "events_exchange": EVENTS_EXCHANGE,
         "dead_letter_exchange": DEAD_LETTER_EXCHANGE,

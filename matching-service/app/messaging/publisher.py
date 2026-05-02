@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por publicar os eventos enfileirados no banco de dados para o RabbitMQ. 
+"""
 import asyncio
 from contextlib import suppress
 from datetime import datetime, timedelta, timezone
@@ -27,10 +30,24 @@ MAX_RETRY_DELAY_SECONDS = 60.0
 
 
 def utc_now() -> datetime:
+    """"
+    Retorna a data e hora atual em UTC.
+    args:
+        None
+    returns:
+        A data e hora atual em UTC.
+    """
     return datetime.now(timezone.utc)
 
 
 def serialize_outbox_event(outbox_event: OutboxEvent) -> bytes:
+    """"
+    Serializa um evento de outbox para o formato JSON a ser publicado no RabbitMQ.
+    args:
+    outbox_event: O evento de outbox a ser serializado.
+    returns:
+    Os bytes do evento serializado em formato JSON.
+    """
     envelope = {
         "event_id": str(outbox_event.id),
         "event_type": outbox_event.event_type,
@@ -45,17 +62,41 @@ def serialize_outbox_event(outbox_event: OutboxEvent) -> bytes:
 
 
 class OutboxPublisher:
+    """"
+    Classe responsável por publicar os eventos enfileirados no banco de dados para o RabbitMQ.
+    """
     def __init__(self) -> None:
+        """"
+        Inicializa o publisher de outbox.
+        args:
+            None
+        returns:
+            None
+        """
         self._task: asyncio.Task | None = None
         self._connection: aio_pika.RobustConnection | None = None
         self._channel: aio_pika.abc.AbstractRobustChannel | None = None
 
     async def start(self) -> None:
+        """
+        Inicia o publisher de outbox. Ele cria uma tarefa assíncrona para publicar os eventos em loop.
+        args:
+            None
+        returns:            
+            None
+        """
         if self._task is not None:
             return
         self._task = asyncio.create_task(self._run_loop(), name="matching-outbox-publisher")
 
     async def stop(self) -> None:
+        """
+        Para o publisher de outbox.
+        args:
+            None
+        returns:
+            None
+        """
         if self._task is not None:
             self._task.cancel()
             with suppress(asyncio.CancelledError):
@@ -65,6 +106,14 @@ class OutboxPublisher:
         await self._close_resources()
 
     async def _run_loop(self) -> None:
+        """"
+        Loop principal de publicação de eventos. Ele tenta se conectar ao RabbitMQ e publicar os eventos.
+        Em caso de falha, ele aguarda um tempo configurado antes de tentar novamente.
+        args:
+            None
+        returns:        
+            None
+        """
         settings = get_settings()
         while True:
             try:
@@ -82,6 +131,13 @@ class OutboxPublisher:
                 await asyncio.sleep(settings.outbox_publish_retry_delay_seconds)
 
     async def _initialize(self):
+        """"
+        Inicializa as conexões e bindings necessários para publicar os eventos no RabbitMQ.
+        args:
+            None
+        returns:    
+            A exchange configurada para publicar os eventos.
+        """
         settings = get_settings()
         self._connection = await aio_pika.connect_robust(settings.rabbitmq_url)
         self._channel = await self._connection.channel(
@@ -117,6 +173,13 @@ class OutboxPublisher:
         return exchange
 
     async def _close_resources(self) -> None:
+        """
+        Fecha as conexões e canais abertos com o RabbitMQ.
+        args:            
+            None
+        returns:            
+            None   
+        """
         if self._channel is not None and not self._channel.is_closed:
             await self._channel.close()
         if self._connection is not None and not self._connection.is_closed:
@@ -125,6 +188,13 @@ class OutboxPublisher:
         self._connection = None
 
     async def _publish_batch(self, exchange) -> int:
+        """
+        Publica um lote de eventos enfileirados no banco de dados para o RabbitMQ.
+        args:
+            exchange: A exchange do RabbitMQ para onde os eventos devem ser publicados.
+        returns:
+            O número de eventos publicados no lote.
+        """
         settings = get_settings()
         session = SessionLocal()
         published_count = 0

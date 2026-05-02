@@ -1,3 +1,7 @@
+""""
+Esse arquivo é responsável por definir a classe de configuração da aplicação, que carrega as variáveis de ambiente 
+e fornece uma interface para acessar essas configurações em toda a aplicação.
+"""
 from functools import lru_cache
 
 from pydantic import Field
@@ -5,6 +9,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    """"
+    Classe de configuração da aplicação, que carrega as variáveis de ambiente e fornece uma interface para acessar essas 
+    configurações em toda a aplicação.
+    """
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -65,4 +73,8 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
+    """"
+    Função para obter as configurações da aplicação. Utiliza cache para evitar recarregar as configurações a 
+    cada chamada.
+    """
     return Settings()

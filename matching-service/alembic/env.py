@@ -1,3 +1,8 @@
+""""
+Esse arquivo é responsável por configurar o ambiente de migração do Alembic para o projeto de matching-service. 
+Ele define as configurações necessárias para conectar ao banco de dados, bem como as funções para executar 
+migrações online e offline. 
+"""
 from logging.config import fileConfig
 
 from alembic import context
@@ -17,6 +22,10 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
+    """"
+    Esta função é responsável por configurar o contexto de migração para rodar em modo offline. 
+    Ela gera os comandos SQL para aplicar as migrações sem se conectar diretamente ao banco de dados.
+    """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -30,6 +39,10 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
+    """"
+    Esta função é responsável por configurar o contexto de migração para rodar em modo online. 
+    Ela se conecta diretamente ao banco de dados e aplica as migrações.
+    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por configurar e iniciar o serviço de matching.
+"""
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -17,6 +20,14 @@ outbox_publisher = OutboxPublisher()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    """"
+    Gerenciador de contexto para o ciclo de vida do aplicativo, responsável por iniciar e parar os 
+    componentes do serviço.
+    args:
+        _: A instância do FastAPI.
+    returns:
+        Um gerenciador de contexto assíncrono que inicia os componentes do serviço.  
+    """
     logger.info("service_starting")
     if settings.outbox_publisher_enabled:
         await outbox_publisher.start()

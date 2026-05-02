@@ -1,15 +1,12 @@
-"""phase3 matching domain
-
-Revision ID: phase3_matching_domain
-Revises: phase0_base
-Create Date: 2026-04-14 00:30:00
+""""
+Esse arquivo é responsável pela migração do Alembic cria as tabelas necessárias para o domínio de matching 
+na fase 3 do projeto. 
 """
 
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-# revision identifiers, used by Alembic.
 revision = "phase3_matching_domain"
 down_revision = "phase0_base"
 branch_labels = None
@@ -17,6 +14,10 @@ depends_on = None
 
 
 def upgrade() -> None:
+    """"
+    Esta função é responsável por criar as tabelas item_projections e match_suggestions no banco de dados, 
+    juntamente com os índices necessários para otimizar as consultas.
+    """
     classification_enum = sa.Enum(
         "LOST",
         "FOUND",
@@ -107,6 +108,10 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    """"
+    Esta função é responsável por remover as tabelas item_projections e match_suggestions do banco de dados,
+    juntamente com os índices e tipos enumerados associados a essas tabelas.
+    """
     op.drop_index("ix_match_suggestions_status", table_name="match_suggestions")
     op.drop_index("ix_match_suggestions_found_item_id", table_name="match_suggestions")
     op.drop_index("ix_match_suggestions_lost_item_id", table_name="match_suggestions")

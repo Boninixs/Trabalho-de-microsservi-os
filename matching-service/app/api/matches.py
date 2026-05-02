@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por definir os endpoints relacionados a matches, como listar sugestões de matches.
+"""
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -23,12 +26,19 @@ def list_matches_endpoint(
     status_filter: MatchStatus | None = Query(default=None, alias="status"),
     db: Session = Depends(get_db),
 ) -> list[MatchResponse]:
+    """"
+    Endpoint para listar sugestões de matches, com opção de filtrar por status.
+    """
     filters = MatchFilters(status=status_filter)
     return [to_match_response(match) for match in list_match_suggestions(db, filters)]
 
 
 @router.get("/{match_id}", response_model=MatchResponse)
 def get_match_endpoint(match_id: UUID, db: Session = Depends(get_db)) -> MatchResponse:
+    """"
+    Endpoint para obter detalhes de uma sugestão de match específica. 
+    Deve retornar 404 se a sugestão de match não for encontrada.
+    """
     try:
         match = retrieve_match_suggestion(db, match_id)
     except MatchNotFoundError as exc:
@@ -42,6 +52,10 @@ def accept_match_endpoint(
     payload: MatchDecisionRequest,
     db: Session = Depends(get_db),
 ) -> MatchResponse:
+    """"
+    Endpoint para aceitar uma sugestão de match.
+    Deve retornar 404 se a sugestão de match não for encontrada e 400 se a decisão for inválida 
+    """
     try:
         match = accept_match(db, match_id, payload)
     except MatchNotFoundError as exc:
@@ -57,6 +71,10 @@ def reject_match_endpoint(
     payload: MatchDecisionRequest,
     db: Session = Depends(get_db),
 ) -> MatchResponse:
+    """"
+    Endpoint para rejeitar uma sugestão de match.
+    Deve retornar 404 se a sugestão de match não for encontrada e 400 se a decisão for inválida.
+    """
     try:
         match = reject_match(db, match_id, payload)
     except MatchNotFoundError as exc:

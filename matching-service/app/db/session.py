@@ -1,3 +1,8 @@
+""""
+Esse arquivo é responsável pela configuração de conexão com o banco de dados.
+Nele há a criação da engine do SQLAlchemy, a configuração da fábrica de sessões e 
+a definição de uma função de dependência para fornecer sessões ao FastAPI.
+"""
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -20,6 +25,12 @@ SessionLocal = sessionmaker(
 
 
 def get_db():
+    """
+    Fornece uma sessão de banco de dados por requisição, utilizado como dependência no 
+    FastAPI.
+    Yields:
+        Sessão ativa do banco de dados.
+    """
     db = SessionLocal()
     try:
         yield db

@@ -1,10 +1,5 @@
 """
 Esse arquivo é responsável pela configuração de logging e rastreio de requisições.
-Nele, implementamos um formatter que formata os logs em JSON, utilizamos contextvars 
-para injetar o correlation_id em todos os logs relacionados a uma requisição específica, 
-permitindo rastrear o fluxo de uma requisição através dos logs. 
-Além disso, implementamos um middleware que mede a duração de cada requisição HTTP e 
-inclui essa informação nos logs.
 """
 import json
 import logging
@@ -28,11 +23,11 @@ service_name_ctx: ContextVar[str] = ContextVar(
 class JsonFormatter(logging.Formatter):
     """
     Formatter de logs em formato JSON.
-
-    Adiciona automaticamente o timestamp, nível do log, nome do logger, correlation_id
-    e nome do serviço
     """
     def format(self, record: logging.LogRecord) -> str:
+        """"
+        Formata o log como JSON, incluindo campos adicionais como correlation_id e service.
+        """
         payload: dict[str, object] = {
             "timestamp": self.formatTime(record, "%Y-%m-%dT%H:%M:%S%z"),
             "level": record.levelname,

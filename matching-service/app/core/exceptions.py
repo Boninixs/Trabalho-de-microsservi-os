@@ -1,14 +1,25 @@
+"""
+Esse arquivo é responsável pelas exceções relacionadas ao serviço de matching.
+"""
 class MatchingServiceError(Exception):
-    """Base exception for matching-service."""
+    """
+    Exceção base para o serviço de matching.
+    """
 
 
 class MatchNotFoundError(MatchingServiceError):
-    """Raised when a match suggestion is not found."""
+    """
+    Erro lançado quando um match não é encontrado.
+    """
 
 
 class InvalidMatchError(MatchingServiceError):
-    """Raised when a match cannot be created or updated."""
+    """"
+    Erro lançado quando um match não pode ser criado ou atualizado.
+    """
 
 
 class InvalidMatchDecisionError(MatchingServiceError):
-    """Raised when a match decision is invalid."""
+    """"
+    Erro lançado quando uma decisão de match é inválida.
+    """

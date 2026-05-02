@@ -1,3 +1,7 @@
+""""
+Esse arquivo é responsável por definir as classes base e mixins comuns para os modelos de dados 
+do serviço de autenticação.
+"""
 import uuid
 from datetime import datetime
 
@@ -7,10 +11,16 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
+    """"
+    Classe base para os modelos de dados do serviço de autenticação.
+    """
     pass
 
 
 class UUIDPrimaryKeyMixin:
+    """"
+    Mixin para adicionar um campo de chave primária do tipo UUID aos modelos de dados.
+    """
     id: Mapped[uuid.UUID] = mapped_column(
         PGUUID(as_uuid=True),
         primary_key=True,
@@ -19,6 +29,9 @@ class UUIDPrimaryKeyMixin:
 
 
 class TimestampMixin:
+    """"
+    Mixin para adicionar campos de timestamp aos modelos de dados.
+    """
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),

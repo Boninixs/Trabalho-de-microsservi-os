@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por consumir eventos relacionados ao RabbitMQ. 
+"""
 import asyncio
 from contextlib import suppress
 import json
@@ -15,17 +18,41 @@ logger = get_logger(__name__)
 
 
 class ItemEventsConsumer:
+    """"
+    Classe responsável por consumir eventos relacionados a itens do RabbitMQ.
+    """
     def __init__(self) -> None:
+        """"
+        Inicializa o consumidor de eventos.
+        args:
+            None
+        returns:
+            None
+        """
         self._task: asyncio.Task | None = None
         self._connection: aio_pika.RobustConnection | None = None
         self._channel: aio_pika.abc.AbstractRobustChannel | None = None
 
     async def start(self) -> None:
+        """"
+        Inicia o consumidor de eventos. Ele cria uma tarefa assíncrona para consumir os eventos em loop.
+        args:
+            None
+        returns:
+            None
+        """
         if self._task is not None:
             return
         self._task = asyncio.create_task(self._consume_loop(), name="matching-item-events-consumer")
 
     async def stop(self) -> None:
+        """"
+        Para o consumidor de eventos.
+        args:
+            None
+        returns:
+            None
+        """
         if self._task is not None:
             self._task.cancel()
             with suppress(asyncio.CancelledError):
@@ -35,6 +62,14 @@ class ItemEventsConsumer:
         await self._close_resources()
 
     async def _consume_loop(self) -> None:
+        """"
+        Loop principal de consumo de eventos. Ele tenta se conectar ao RabbitMQ e consumir os eventos.
+        Em caso de falha, ele aguarda um tempo configurado antes de tentar novamente.
+        args:
+            None
+        returns:
+            None
+        """
         settings = get_settings()
         while True:
             try:
@@ -51,6 +86,13 @@ class ItemEventsConsumer:
                 await asyncio.sleep(settings.outbox_publish_retry_delay_seconds)
 
     async def _initialize_bindings(self) -> aio_pika.abc.AbstractRobustQueue:
+        """"
+        Inicializa as conexões e bindings necessários para consumir os eventos do RabbitMQ.
+        args:
+            None
+        returns:
+            A fila configurada para consumir os eventos.
+        """
         settings = get_settings()
         self._connection = await aio_pika.connect_robust(settings.rabbitmq_url)
         self._channel = await self._connection.channel()
@@ -82,6 +124,13 @@ class ItemEventsConsumer:
         return queue
 
     async def _close_resources(self) -> None:
+        """"
+        Fecha as conexões e canais abertos com o RabbitMQ.
+        args:
+            None
+        returns:
+            None
+        """
         if self._channel is not None and not self._channel.is_closed:
             await self._channel.close()
         if self._connection is not None and not self._connection.is_closed:
@@ -90,6 +139,13 @@ class ItemEventsConsumer:
         self._connection = None
 
     async def _process_message(self, message: IncomingMessage) -> None:
+        """"
+        Processa uma mensagem recebida do RabbitMQ. 
+        args:
+            message: A mensagem recebida do RabbitMQ a ser processada.
+        returns:
+            None
+        """
         async with message.process(requeue=False):
             envelope = EventEnvelope.model_validate(json.loads(message.body.decode("utf-8")))
             token = correlation_id_ctx.set(str(envelope.correlation_id))

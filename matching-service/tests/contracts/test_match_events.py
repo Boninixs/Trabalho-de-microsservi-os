@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por testar os contratos dos eventos de sugestão, aceitação e rejeição de matches. 
+"""
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -14,6 +17,9 @@ from app.services.matching_service import record_match_event
 
 
 class FakeSession:
+    """
+    Sessão fake para capturar os objetos adicionados durante os testes de contrato.
+    """
     def __init__(self):
         self.added_objects = []
 
@@ -22,6 +28,9 @@ class FakeSession:
 
 
 def build_match(status: MatchStatus = MatchStatus.SUGGESTED) -> MatchSuggestion:
+    """
+    Função auxiliar para construir um MatchSuggestion com um status específico para os testes de contrato.  
+    """
     now = datetime.now(timezone.utc)
     return MatchSuggestion(
         id=uuid4(),
@@ -38,6 +47,9 @@ def build_match(status: MatchStatus = MatchStatus.SUGGESTED) -> MatchSuggestion:
 
 @pytest.mark.contract
 def test_match_suggested_contract() -> None:
+    """
+    Testa o contrato do evento de sugestão de match.
+    """
     session = FakeSession()
     match = build_match(MatchStatus.SUGGESTED)
 
@@ -63,6 +75,9 @@ def test_match_suggested_contract() -> None:
 
 @pytest.mark.contract
 def test_match_accepted_contract() -> None:
+    """
+    Testa o contrato do evento de aceitação de match.
+    """
     session = FakeSession()
     match = build_match(MatchStatus.ACCEPTED)
 
@@ -88,6 +103,9 @@ def test_match_accepted_contract() -> None:
 
 @pytest.mark.contract
 def test_match_rejected_contract() -> None:
+    """
+    Testa o contrato do evento de rejeição de match.
+    """
     session = FakeSession()
     match = build_match(MatchStatus.REJECTED)
 

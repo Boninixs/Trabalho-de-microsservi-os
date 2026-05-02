@@ -1,3 +1,6 @@
+"""
+Esse arquivo é responsável por testar a integração do serviço de matching.
+"""
 from datetime import date, datetime, timezone
 from uuid import uuid4
 
@@ -13,6 +16,17 @@ pytestmark = pytest.mark.integration
 
 
 def build_item_event(*, event_type: str, item_id, classification: str, status: str = "AVAILABLE", version: int = 1):
+    """"
+    Função auxiliar para construir um EventEnvelope representando um evento de item criado ou atualizado.
+    args:
+        event_type: O tipo do evento.
+        item_id: O ID do item relacionado ao evento.
+        classification: A classificação do item.
+        status: O status do item.
+        version: A versão do evento.
+    returns:
+        Um objeto EventEnvelope com os campos preenchidos.
+    """
     now = datetime.now(timezone.utc)
     return EventEnvelope.model_validate(
         {
@@ -43,6 +57,9 @@ def build_item_event(*, event_type: str, item_id, classification: str, status: s
 
 
 def test_consume_item_created_persists_suggestion(postgres_session) -> None:
+    """
+    Testa que o consumo de um evento de item criado persiste uma sugestão de match.
+    """
     lost_id = uuid4()
     found_id = uuid4()
 
@@ -62,6 +79,9 @@ def test_consume_item_created_persists_suggestion(postgres_session) -> None:
 
 
 def test_consume_item_updated_expires_match(postgres_session) -> None:
+    """
+    Testa que o consumo de um evento de item atualizado com status CANCELLED expira a sugestão de match.
+    """
     lost_id = uuid4()
     found_id = uuid4()
     consume_item_event(
@@ -90,6 +110,9 @@ def test_consume_item_updated_expires_match(postgres_session) -> None:
 
 
 def test_match_endpoints_query_and_decide(integration_client, postgres_session) -> None:
+    """
+    Testa os endpoints de listagem, consulta e decisão de matches.
+    """
     lost_id = uuid4()
     found_id = uuid4()
     consume_item_event(

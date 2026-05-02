@@ -27,9 +27,12 @@ SessionLocal = sessionmaker(
 def get_db():
     """
     Fornece uma sessão de banco de dados por requisição.
-    Utilizado como dependência no FastAPI.
-    """
 
+    Utilizado como dependência no FastAPI.
+
+    Yields:
+        Sessão ativa do banco de dados.
+    """
     db = SessionLocal()
     try:
         yield db

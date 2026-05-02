@@ -1,3 +1,7 @@
+""""
+Esse arquivo é responsável por definir o modelo de dados para as sugestões de match, que representam as possíveis 
+correspondências entre itens perdidos e encontrados no serviço de matching.
+"""
 import enum
 import uuid
 from datetime import datetime
@@ -10,6 +14,9 @@ from app.models.common import Base, UUIDPrimaryKeyMixin, TimestampMixin
 
 
 class MatchStatus(str, enum.Enum):
+    """"
+    Enum para representar o status das sugestões de match.
+    """
     SUGGESTED = "SUGGESTED"
     ACCEPTED = "ACCEPTED"
     REJECTED = "REJECTED"
@@ -17,6 +24,16 @@ class MatchStatus(str, enum.Enum):
 
 
 class MatchSuggestion(UUIDPrimaryKeyMixin, TimestampMixin, Base):
+    """"
+    Modelo de dados para as sugestões de match, que representam as possíveis correspondências entre itens perdidos
+    e encontrados no serviço de matching.   
+    args:        
+        UUIDPrimaryKeyMixin: Mixin para adicionar um campo de chave primária do tipo UUID
+        TimestampMixin: Mixin para adicionar campos de timestamp
+        Base: Classe base para os modelos de dados do serviço de autenticação
+    returns:    
+        MatchSuggestion: Um modelo de dados para representar as sugestões de match no serviço de matching.  
+    """
     __tablename__ = "match_suggestions"
     __table_args__ = (
         UniqueConstraint(
