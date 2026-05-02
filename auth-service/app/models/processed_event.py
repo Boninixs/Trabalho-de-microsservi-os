@@ -1,3 +1,7 @@
+""""
+Esse arquivo é responsável por definir o modelo de dados para a tabela processed_events, que é 
+usada para rastrear quais eventos já foram processados para evitar processamento duplicado.
+"""
 import uuid
 from datetime import datetime
 
@@ -9,6 +13,9 @@ from app.models.common import Base
 
 
 class ProcessedEvent(Base):
+    """
+    Entidade que representa um evento já processado.
+    """
     __tablename__ = "processed_events"
 
     event_id: Mapped[uuid.UUID] = mapped_column(

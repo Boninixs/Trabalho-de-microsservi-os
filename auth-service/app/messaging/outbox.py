@@ -1,3 +1,8 @@
+"""
+Esse arquivo é responsável pelos serviços relacionados ao Outbox Pattern.
+Nele, são infilerados os eventos para a publicação assíncrona, garantindo a persistência 
+dos eventos antes de enviá-los ao broker.
+"""
 from sqlalchemy.orm import Session
 
 from app.models.outbox import OutboxEvent

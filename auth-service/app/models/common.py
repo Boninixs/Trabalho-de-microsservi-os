@@ -1,3 +1,6 @@
+""""
+Esse arquivo é responsável por definir as classes base e mixins comuns para o ORM.
+"""
 import uuid
 from datetime import datetime
 
@@ -7,6 +10,11 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
+    """
+    Classe base para todos os modelos ORM.
+
+    Centraliza o metadata utilizado pelo SQLAlchemy e Alembic.
+    """
     pass
 
 
@@ -19,6 +27,9 @@ class UUIDPrimaryKeyMixin:
 
 
 class TimestampMixin:
+    """
+    Mixin para adicionar campos de timestamp aos modelos ORM.
+    """
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),

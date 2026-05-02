@@ -1,3 +1,7 @@
+""""
+Esse arquivo é o ponto de entrada da aplicação, onde a instância do FastAPI é criada, configurada e as rotas 
+são incluídas. Ele também define o ciclo de vida da aplicação, registrando logs de início e parada do serviço.
+"""
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI

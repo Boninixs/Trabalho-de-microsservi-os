@@ -1,3 +1,7 @@
+""""
+Esse arquivo é responsável por fornecer funções para interagir com a tabela de OutboxEvent no banco de dados. 
+Ele inclui funções para adicionar um novo evento, listar eventos pendentes e marcar um evento como publicado. 
+"""
 from uuid import UUID
 
 from sqlalchemy import select
@@ -7,6 +11,8 @@ from app.models.outbox import OutboxEvent
 
 
 def add_outbox_event(session: Session, outbox_event: OutboxEvent) -> OutboxEvent:
+    """"
+    Adiciona um novo evento à tabela de OutboxEvent."""
     session.add(outbox_event)
     return outbox_event
 
@@ -15,6 +21,16 @@ def list_pending_outbox_events(
     session: Session,
     limit: int = 100,
 ) -> list[OutboxEvent]:
+    """"
+    Lista os eventos pendentes na tabela de OutboxEvent, ordenados por data de ocorrência.
+    
+    Args:
+        session (Session): A sessão do banco de dados.
+        limit: O número máximo de eventos a serem retornados.
+    
+    Returns:
+        list[OutboxEvent]: Uma lista de eventos pendentes.
+    """
     statement = (
         select(OutboxEvent)
         .where(OutboxEvent.status == "PENDING")
@@ -25,6 +41,10 @@ def list_pending_outbox_events(
 
 
 def mark_outbox_event_published(session: Session, event_id: UUID) -> OutboxEvent | None:
+    """"
+    marca um evento como publicado na tabela de OutboxEvent, atualizando seu status para "PUBLISHED" e 
+    incrementando o número de tentativas de publicação.
+    """
     outbox_event = session.get(OutboxEvent, event_id)
     if outbox_event is None:
         return None

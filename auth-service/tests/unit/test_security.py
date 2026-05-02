@@ -1,3 +1,7 @@
+""""
+Esse arquivo contém os testes unitários para as funções de segurança, como hashing de senha e criação/decodificação 
+de tokens JWT.
+"""
 from uuid import UUID
 
 import pytest
@@ -7,7 +11,7 @@ from app.models.user import UserRole
 
 
 def test_hash_password_generates_different_value_and_verifies() -> None:
-    password = "SuperSecret123"
+    password = "senha123"
 
     hashed_password = hash_password(password)
 
