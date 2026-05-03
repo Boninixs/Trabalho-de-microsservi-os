@@ -30,6 +30,7 @@ def add_item_projection(session: Session, item_projection: ItemProjection) -> It
     returns:
         ItemProjection: A projeção do item que foi adicionada ao banco de dados.
     """
+    session.add(item_projection)
     return item_projection
 
 
@@ -69,4 +70,3 @@ def get_item_projections_by_ids(session: Session, item_ids: list[UUID]) -> list[
     """
     statement = select(ItemProjection).where(ItemProjection.id.in_(item_ids))
     return list(session.scalars(statement))
-
