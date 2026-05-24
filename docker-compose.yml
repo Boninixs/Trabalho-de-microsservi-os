@@ -110,7 +110,7 @@ services:
     environment:
       <<: *backend-service-env
       SERVICE_NAME: auth-service
-      SERVICE_VERSION: 0.1.0
+      SERVICE_VERSION: 1.0.0
       SERVICE_PORT: 8000
       DATABASE_URL: postgresql+psycopg://${AUTH_DB_USER:-postgres}:${AUTH_DB_PASSWORD:-postgres}@auth-postgres:5432/${AUTH_DB_NAME:-auth_service}
       DATABASE_ECHO: "false"
@@ -135,7 +135,7 @@ services:
     environment:
       <<: *backend-service-env
       SERVICE_NAME: item-service
-      SERVICE_VERSION: 0.1.0
+      SERVICE_VERSION: 1.0.0
       SERVICE_PORT: 8000
       DATABASE_URL: postgresql+psycopg://${ITEM_DB_USER:-postgres}:${ITEM_DB_PASSWORD:-postgres}@item-postgres:5432/${ITEM_DB_NAME:-item_service}
       DATABASE_ECHO: "false"
@@ -162,7 +162,7 @@ services:
     environment:
       <<: *backend-service-env
       SERVICE_NAME: matching-service
-      SERVICE_VERSION: 0.1.0
+      SERVICE_VERSION: 1.0.0
       SERVICE_PORT: 8000
       DATABASE_URL: postgresql+psycopg://${MATCHING_DB_USER:-postgres}:${MATCHING_DB_PASSWORD:-postgres}@matching-postgres:5432/${MATCHING_DB_NAME:-matching_service}
       DATABASE_ECHO: "false"
@@ -190,7 +190,7 @@ services:
     environment:
       <<: *backend-service-env
       SERVICE_NAME: recovery-case-service
-      SERVICE_VERSION: 0.1.0
+      SERVICE_VERSION: 1.0.0
       SERVICE_PORT: 8000
       DATABASE_URL: postgresql+psycopg://${RECOVERY_DB_USER:-postgres}:${RECOVERY_DB_PASSWORD:-postgres}@recovery-postgres:5432/${RECOVERY_DB_NAME:-recovery_case_service}
       DATABASE_ECHO: "false"
@@ -223,7 +223,7 @@ services:
       ENVIRONMENT: ${ENVIRONMENT:-development}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       SERVICE_NAME: gateway
-      SERVICE_VERSION: 0.1.0
+      SERVICE_VERSION: 1.0.0
       SERVICE_PORT: 8000
       AUTH_SERVICE_BASE_URL: http://auth-service:8000
       ITEM_SERVICE_BASE_URL: http://item-service:8000
@@ -247,9 +247,42 @@ services:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')\""]
       <<: *http-healthcheck
 
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    ports:
+      - "${PROMETHEUS_HTTP_PORT:-9090}:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      gateway:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      item-service:
+        condition: service_healthy
+      matching-service:
+        condition: service_healthy
+      recovery-case-service:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    ports:
+      - "${GRAFANA_HTTP_PORT:-3000}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
 volumes:
   rabbitmq_data:
   auth_postgres_data:
   item_postgres_data:
   matching_postgres_data:
   recovery_postgres_data:
+  grafana_data:
