@@ -159,3 +159,121 @@ Routing keys publicadas no broker:
 - [Matching Service](docs/matching-service.md)
 - [Recovery Case Service](docs/recovery-case-service.md)
 - [Testes Manuais Pelo Terminal](docs/testes-manuais-pelo-terminal.md)
+
+## DevOps dos Microsservicos FastAPI
+
+Cada microsservico FastAPI possui container Docker, testes automatizados, pipeline proprio de CI e suporte a observabilidade com Prometheus e Grafana.
+
+### Fluxo de branches
+
+- `main`: ambiente de homologacao
+- `develop`: ambiente de desenvolvimento
+- `feature/*`: branches de implementacao
+
+### Pipelines CI
+
+Ao abrir Pull Request para `develop` ou `main`, o GitHub Actions executa um pipeline por microsservico:
+
+1. Instalacao das dependencias
+2. Testes automatizados com `pytest`
+3. Analise com SonarCloud
+4. Build da imagem Docker
+
+Workflows configurados:
+
+- `.github/workflows/ci-auth-service.yml`
+- `.github/workflows/ci-gateway.yml`
+- `.github/workflows/ci-item-service.yml`
+- `.github/workflows/ci-matching-service.yml`
+- `.github/workflows/ci-recovery-case-service.yml`
+
+### Publicacao de imagens
+
+O workflow `.github/workflows/docker-publish.yml` publica imagens no GitHub Container Registry quando houver push em `develop` ou `main`.
+
+As imagens seguem o padrao:
+
+```text
+ghcr.io/<owner>/<repo>/<service>:<commit-sha>
+```
+
+### Deploy
+
+O workflow `.github/workflows/deploy.yml` dispara deploy automatico via Render Deploy Hook:
+
+- Push em `develop`: deploy em DEV
+- Push em `main`: deploy em HOMOL
+
+Secrets necessarios no GitHub Actions:
+
+```text
+SONAR_TOKEN
+SONAR_ORGANIZATION
+RENDER_DEPLOY_HOOK_AUTH_DEV
+RENDER_DEPLOY_HOOK_AUTH_HOMOL
+RENDER_DEPLOY_HOOK_GATEWAY_DEV
+RENDER_DEPLOY_HOOK_GATEWAY_HOMOL
+RENDER_DEPLOY_HOOK_ITEM_DEV
+RENDER_DEPLOY_HOOK_ITEM_HOMOL
+RENDER_DEPLOY_HOOK_MATCHING_DEV
+RENDER_DEPLOY_HOOK_MATCHING_HOMOL
+RENDER_DEPLOY_HOOK_RECOVERY_DEV
+RENDER_DEPLOY_HOOK_RECOVERY_HOMOL
+```
+
+No Render, configure `ENVIRONMENT=DEV` para desenvolvimento e `ENVIRONMENT=HOMOL` para homologacao.
+
+### Ambientes
+
+DEV:
+
+- Swagger habilitado
+- Endpoints `/docs`, `/redoc` e `/openapi.json` disponiveis
+
+HOMOL:
+
+- Swagger desabilitado
+- Endpoints `/docs`, `/redoc` e `/openapi.json` indisponiveis
+
+### Observabilidade
+
+Todos os servicos expoem metricas em:
+
+```text
+/metrics
+```
+
+O Prometheus coleta metricas dos servicos configurados em `infra/prometheus/prometheus.yml`, e o Grafana pode ser acessado pela stack Docker Compose.
+
+URLs locais:
+
+```text
+Gateway:     http://localhost:8000
+Prometheus:  http://localhost:9090
+Grafana:     http://localhost:3000
+```
+
+No Grafana, adicione o Prometheus como datasource:
+
+```text
+http://prometheus:9090
+```
+
+Dashboards esperados:
+
+1. Total de requisicoes HTTP
+2. Tempo medio/duracao das requisicoes
+3. Requisicoes por rota/status
+
+### Seguranca e dependencias
+
+- Secrets sensiveis ficam no GitHub Actions
+- Dependabot esta habilitado para Python, Docker e GitHub Actions
+
+### Versionamento
+
+O projeto utiliza Semantic Versioning. A versao inicial dos microsservicos esta em cada arquivo `VERSION`:
+
+```text
+1.0.0
+```
